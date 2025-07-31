@@ -1,0 +1,64 @@
+
+==============================
+Algoritmo: Prioridad (sin desalojo)
+Proceso 4 → Espera: 1753030125 s | Respuesta: 1753030126 s | Resultado: Nada que leer
+Proceso 2 → Espera: 1753030129 s | Respuesta: 1753030132 s | Resultado: Nada que leer
+Proceso 1 → Espera: 1753030133 s | Respuesta: 1753030137 s | Resultado: Proceso 1 escribió: 3 + 5 = 8
+Proceso 3 → Espera: 1753030137 s | Respuesta: 1753030139 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Promedio espera: 1753030144.00 s
+Promedio respuesta: 1753030144.00 s
+
+==============================
+Algoritmo: Prioridad (con desalojo)
+Proceso 1 → Espera: 1753030349 s | Respuesta: 1753030357 s | Resultado: P1 escribió: 2*3=6
+Proceso 2 → Espera: 1753030349 s | Respuesta: 1753030353 s | Resultado: Nada que leer
+Proceso 3 → Espera: 1753030355 s | Respuesta: 1753030357 s | Resultado: P3 escribió: 2*3=6
+Proceso 4 → Espera: 1753030349 s | Respuesta: 1753030350 s | Resultado: Nada que leer
+Promedio espera: 1753030400.00 s
+Promedio respuesta: 1753030400.00 s
+
+==============================
+Algoritmo: Round Robin
+Proceso 1 → Espera: 1753030531 s | Respuesta: 1753030535 s | Resultado: Proceso 1 escribió: 3 * 5 = 15
+Proceso 2 → Espera: 1753030534 s | Respuesta: 1753030537 s | Resultado: Proceso 1 escribió: 3 * 5 = 15
+Proceso 3 → Espera: 1753030536 s | Respuesta: 1753030538 s | Resultado: Proceso 3 escribió: 3 * 5 = 15
+Proceso 4 → Espera: 1753030537 s | Respuesta: 1753030538 s | Resultado: Proceso 3 escribió: 3 * 5 = 15
+Promedio espera: 1753030528.00 s
+Promedio respuesta: 1753030528.00 s
+
+
+==============================
+Algoritmo: FCFS
+Proceso 1 → Espera: 1753031327 s | Respuesta: 1753031331 s | Resultado: Proceso 1 escribió: 3 + 5 = 8
+Proceso 2 → Espera: 1753031331 s | Respuesta: 1753031334 s | Resultado: Proceso 1 escribió: 3 + 5 = 8
+Proceso 3 → Espera: 1753031335 s | Respuesta: 1753031337 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Proceso 4 → Espera: 1753031339 s | Respuesta: 1753031340 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Promedio espera: 1753031296.00 s
+Promedio respuesta: 1753031296.00 s
+
+==============================
+Algoritmo: SJN
+Proceso 4 → Espera: 1753031357 s | Respuesta: 1753031358 s | Resultado: Nada que leer
+Proceso 3 → Espera: 1753031361 s | Respuesta: 1753031363 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Proceso 2 → Espera: 1753031365 s | Respuesta: 1753031368 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Proceso 1 → Espera: 1753031369 s | Respuesta: 1753031373 s | Resultado: Proceso 1 escribió: 3 + 5 = 8
+Promedio espera: 1753031424.00 s
+Promedio respuesta: 1753031424.00 s
+
+==============================
+Algoritmo: FCFS
+Proceso 1 → Espera: 1753032395 s | Respuesta: 1753032399 s | Resultado: Proceso 1 escribió: 3 + 5 = 8
+Proceso 2 → Espera: 1753032399 s | Respuesta: 1753032402 s | Resultado: Proceso 1 escribió: 3 + 5 = 8
+Proceso 3 → Espera: 1753032403 s | Respuesta: 1753032405 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Proceso 4 → Espera: 1753032407 s | Respuesta: 1753032408 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Promedio espera: 1753032448.00 s
+Promedio respuesta: 1753032448.00 s
+
+==============================
+Algoritmo: Prioridad (sin desalojo)
+Proceso 4 → Espera: 1753032555 s | Respuesta: 1753032556 s | Resultado: Nada que leer
+Proceso 2 → Espera: 1753032559 s | Respuesta: 1753032562 s | Resultado: Nada que leer
+Proceso 1 → Espera: 1753032563 s | Respuesta: 1753032567 s | Resultado: Proceso 1 escribió: 3 + 5 = 8
+Proceso 3 → Espera: 1753032567 s | Respuesta: 1753032569 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Promedio espera: 1753032576.00 s
+Promedio respuesta: 1753032576.00 s
