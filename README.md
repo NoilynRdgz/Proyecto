@@ -22,10 +22,10 @@ Este proyecto implementa un simulador de diferentes algoritmos de planificación
 
 ```bash
 # Compilar el programa
-gcc -o simulador Algoritmos.c -lpthread
+gcc Algoritmos.c -o Proyecto -lm
 
 # Ejecutar
-./simulador
+./Proyecto
 ```
 
 ## 📊 Estructura del Proyecto
