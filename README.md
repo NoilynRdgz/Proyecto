@@ -1,6 +1,11 @@
 # 🧵 Simulador de Algoritmos de Planificación de Procesos
 
-Este proyecto implementa un simulador de diferentes algoritmos de planificación de procesos del sistema operativo, incluyendo productores y consumidores que trabajan con un archivo compartido.
+**Universidad Latina de Costa Rica**  
+**Ingeniería en Sistemas - BIS11 Sistemas Operativos**  
+**Segundo Cuatrimestre 2025**  
+**Profesor:** Christopher Seas Solano
+
+Este proyecto implementa un simulador completo de diferentes algoritmos de planificación de procesos del sistema operativo, incluyendo productores y consumidores que trabajan con un archivo compartido de capacidad variable.
 
 ## 📋 Características
 
@@ -20,9 +25,22 @@ Este proyecto implementa un simulador de diferentes algoritmos de planificación
 
 ## 🛠️ Compilación y Ejecución
 
+### Opción 1: Usando Makefile (Recomendado)
 ```bash
 # Compilar el programa
-gcc -o simulador Algoritmos.c -lpthread
+make
+
+# Compilar y ejecutar directamente
+make run
+
+# Limpiar archivos compilados
+make clean
+```
+
+### Opción 2: Compilación manual
+```bash
+# Compilar el programa
+gcc -Wall -Wextra -std=c99 -pthread -o simulador Algoritmos.c
 
 # Ejecutar
 ./simulador
@@ -31,6 +49,7 @@ gcc -o simulador Algoritmos.c -lpthread
 ## 📊 Estructura del Proyecto
 
 - `Algoritmos.c` - Código principal con implementación de todos los algoritmos
+- `Makefile` - Archivo para facilitar la compilación
 - `metricas.txt` - Archivo donde se guardan las métricas de ejecución
 - `README.md` - Este archivo
 
@@ -43,6 +62,20 @@ Cada proceso tiene las siguientes propiedades:
 - Tiempo de llegada
 - Prioridad
 - Estado de ejecución
+
+## 🗂️ Archivo Compartido
+
+- **Capacidad variable**: Configurada por el usuario al inicio
+- **Productores**: Escriben cálculos matemáticos al archivo
+- **Consumidores**: Leen y eliminan información del archivo
+- **Sincronización**: Uso de mutex para evitar condiciones de carrera
+
+## 💾 Persistencia de Datos
+
+El sistema permite:
+- Guardar el estado completo de la simulación
+- Cargar estados previos para continuar simulaciones
+- Persistir métricas y resultados en archivos
 
 ## 🤝 Colaboración
 

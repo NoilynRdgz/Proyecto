@@ -9,6 +9,7 @@
 #define QUANTUM 2
 
 pthread_mutex_t mutex_archivo;
+int capacidad_archivo = 5; // Capacidad variable del archivo compartido
 
 // Estructura principal de procesos
 typedef struct {
@@ -109,8 +110,12 @@ void* ejecutar_proceso(void* arg) {
 
     pthread_mutex_lock(&mutex_archivo);
     if (p->tipo == 0) {
-        sprintf(p->resultado, "Proceso %d escribió: 3 + 5 = 8", p->id);
-        strcpy(archivo_memoria[tope++], p->resultado);
+        if (tope < capacidad_archivo) {
+            sprintf(p->resultado, "Proceso %d escribió: 3 + 5 = 8", p->id);
+            strcpy(archivo_memoria[tope++], p->resultado);
+        } else {
+            strcpy(p->resultado, "Archivo lleno - no se pudo escribir");
+        }
     } else {
         if (tope > 0) strcpy(p->resultado, archivo_memoria[--tope]);
         else strcpy(p->resultado, "Nada que leer");
@@ -259,8 +264,12 @@ void planificador_prioridad_con_desalojo(Proceso procesos[], int n) {
                 procesos[mejor].tiempo_fin = tf.tv_sec;
                 pthread_mutex_lock(&mutex_archivo);
                 if (procesos[mejor].tipo == 0) {
-                    sprintf(procesos[mejor].resultado, "P%d escribió: 2*3=6", procesos[mejor].id);
-                    strcpy(archivo_memoria[tope++], procesos[mejor].resultado);
+                    if (tope < capacidad_archivo) {
+                        sprintf(procesos[mejor].resultado, "P%d escribió: 2*3=6", procesos[mejor].id);
+                        strcpy(archivo_memoria[tope++], procesos[mejor].resultado);
+                    } else {
+                        strcpy(procesos[mejor].resultado, "Archivo lleno - no se pudo escribir");
+                    }
                 } else {
                     if (tope > 0) strcpy(procesos[mejor].resultado, archivo_memoria[--tope]);
                     else strcpy(procesos[mejor].resultado, "Nada que leer");
@@ -319,8 +328,12 @@ void planificador_rr(Proceso procesos[], int n) {
                     procesos[i].tiempo_fin = tf.tv_sec;
                     pthread_mutex_lock(&mutex_archivo);
                     if (procesos[i].tipo == 0) {
-                        sprintf(procesos[i].resultado, "Proceso %d escribió: 3 * 5 = 15", procesos[i].id);
-                        strcpy(archivo_memoria[tope++], procesos[i].resultado);
+                        if (tope < capacidad_archivo) {
+                            sprintf(procesos[i].resultado, "Proceso %d escribió: 3 * 5 = 15", procesos[i].id);
+                            strcpy(archivo_memoria[tope++], procesos[i].resultado);
+                        } else {
+                            strcpy(procesos[i].resultado, "Archivo lleno - no se pudo escribir");
+                        }
                     } else {
                         if (tope > 0) strcpy(procesos[i].resultado, archivo_memoria[--tope]);
                         else strcpy(procesos[i].resultado, "Nada que leer");
@@ -352,6 +365,15 @@ void planificador_rr(Proceso procesos[], int n) {
 void menu() {
     pthread_mutex_init(&mutex_archivo, NULL);
 
+    // Configurar capacidad del archivo compartido
+    printf("🗂️  Configuración del archivo compartido:\n");
+    printf("Ingrese la capacidad del archivo (1-%d): ", MAX_PROCESOS);
+    scanf("%d", &capacidad_archivo);
+    if (capacidad_archivo < 1 || capacidad_archivo > MAX_PROCESOS) {
+        capacidad_archivo = 5;
+        printf("⚠️  Capacidad inválida. Usando capacidad por defecto: %d\n", capacidad_archivo);
+    }
+
     Proceso procesos[] = {
         {1, 0, 4, 0, 2, 4, 0, 0, "", 0, 0},
         {2, 1, 3, 1, 1, 3, 0, 0, "", 0, 0},
@@ -361,8 +383,8 @@ void menu() {
     int cantidad = sizeof(procesos)/sizeof(Proceso);
 
     int opcion;
-    printf("\nSeleccione el algoritmo:\n");
-    printf("1. FCFS\n2. SJN\n3. Prioridad (sin desalojo)\n4. Prioridad (con desalojo)\n5. Round Robin\nOpción: ");
+    printf("\n📋 Seleccione el algoritmo:\n");
+    printf("1. FCFS\n2. SJN\n3. Prioridad (sin desalojo)\n4. Prioridad (con desalojo)\n5. Round Robin\n6. Cargar estado desde archivo\n7. Guardar estado actual\nOpción: ");
     scanf("%d", &opcion);
 
     switch (opcion) {
@@ -371,6 +393,24 @@ void menu() {
         case 3: planificador_prioridad_sin_desalojo(procesos, cantidad); break;
         case 4: planificador_prioridad_con_desalojo(procesos, cantidad); break;
         case 5: planificador_rr(procesos, cantidad); break;
+        case 6: {
+            printf("Ingrese el nombre del archivo a cargar: ");
+            char archivo[100];
+            scanf("%s", archivo);
+            int n = cargar_estado(archivo, procesos);
+            if (n > 0) {
+                printf("Estado cargado. Ejecutando con algoritmo FCFS...\n");
+                planificador_fcfs(procesos, n);
+            }
+            break;
+        }
+        case 7: {
+            printf("Ingrese el nombre del archivo para guardar: ");
+            char archivo[100];
+            scanf("%s", archivo);
+            guardar_estado(archivo, procesos, cantidad);
+            break;
+        }
         default: printf("Opción inválida.\n");
     }
 
