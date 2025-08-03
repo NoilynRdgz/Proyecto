@@ -62,3 +62,12 @@ Proceso 1 → Espera: 1753032563 s | Respuesta: 1753032567 s | Resultado: Proces
 Proceso 3 → Espera: 1753032567 s | Respuesta: 1753032569 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
 Promedio espera: 1753032576.00 s
 Promedio respuesta: 1753032576.00 s
+
+==============================
+Algoritmo: FCFS
+Proceso 1 → Espera: 1754248869 s | Respuesta: 1754248873 s | Resultado: Proceso 1 escribió: 3 + 5 = 8
+Proceso 2 → Espera: 1754248873 s | Respuesta: 1754248876 s | Resultado: Proceso 1 escribió: 3 + 5 = 8
+Proceso 3 → Espera: 1754248877 s | Respuesta: 1754248879 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Proceso 4 → Espera: 1754248881 s | Respuesta: 1754248882 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Promedio espera: 1754248832.00 s
+Promedio respuesta: 1754248832.00 s
