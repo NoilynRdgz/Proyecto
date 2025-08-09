@@ -71,3 +71,48 @@ Proceso 3 → Espera: 1754248877 s | Respuesta: 1754248879 s | Resultado: Proces
 Proceso 4 → Espera: 1754248881 s | Respuesta: 1754248882 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
 Promedio espera: 1754248832.00 s
 Promedio respuesta: 1754248832.00 s
+
+==============================
+Algoritmo: FCFS
+Proceso 1 → Espera: 1754512482 s | Respuesta: 1754512486 s | Resultado: Proceso 1 escribió: 3 + 5 = 8
+Proceso 2 → Espera: 1754512486 s | Respuesta: 1754512489 s | Resultado: Proceso 1 escribió: 3 + 5 = 8
+Proceso 3 → Espera: 1754512490 s | Respuesta: 1754512491 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Proceso 4 → Espera: 1754512493 s | Respuesta: 1754512494 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Promedio espera: 1754512512.00 s
+Promedio respuesta: 1754512512.00 s
+
+==============================
+Algoritmo: FCFS
+Proceso 1 → Espera: 1754513163 s | Respuesta: 1754513167 s | Resultado: Proceso 1 escribió: 3 + 5 = 8
+Proceso 2 → Espera: 1754513167 s | Respuesta: 1754513170 s | Resultado: Proceso 1 escribió: 3 + 5 = 8
+Proceso 3 → Espera: 1754513171 s | Respuesta: 1754513173 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Proceso 4 → Espera: 1754513175 s | Respuesta: 1754513176 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Promedio espera: 1754513152.00 s
+Promedio respuesta: 1754513152.00 s
+
+==============================
+Algoritmo: FCFS
+Proceso 1 → Espera: 1754513428 s | Respuesta: 1754513432 s | Resultado: Proceso 1 escribió: 3 + 5 = 8
+Proceso 2 → Espera: 1754513432 s | Respuesta: 1754513435 s | Resultado: Proceso 1 escribió: 3 + 5 = 8
+Proceso 3 → Espera: 1754513436 s | Respuesta: 1754513438 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Proceso 4 → Espera: 1754513440 s | Respuesta: 1754513441 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Promedio espera: 1754513408.00 s
+Promedio respuesta: 1754513408.00 s
+
+==============================
+Algoritmo: SJN
+Proceso 4 → Espera: 1754513859 s | Respuesta: 1754513860 s | Resultado: Nada que leer
+Proceso 3 → Espera: 1754513863 s | Respuesta: 1754513865 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Proceso 2 → Espera: 1754513867 s | Respuesta: 1754513870 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Proceso 1 → Espera: 1754513871 s | Respuesta: 1754513873 s | Resultado: Proceso 1 escribió: 3 + 5 = 8
+Promedio espera: 1754513920.00 s
+Promedio respuesta: 1754513920.00 s
+
+==============================
+Algoritmo: SJN
+Proceso 4 → Espera: 1754514101 s | Respuesta: 1754514103 s | Resultado: Nada que leer
+Proceso 3 → Espera: 1754514106 s | Respuesta: 1754514108 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Proceso 2 → Espera: 1754514110 s | Respuesta: 1754514113 s | Resultado: Proceso 3 escribió: 3 + 5 = 8
+Proceso 1 → Espera: 1754514114 s | Respuesta: 1754514118 s | Resultado: Proceso 1 escribió: 3 + 5 = 8
+Promedio espera: 1754514048.00 s
+Promedio respuesta: 1754514048.00 s

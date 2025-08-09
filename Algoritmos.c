@@ -8,8 +8,18 @@
 #define MAX_PROCESOS 10
 #define QUANTUM 2
 
+// Códigos de colores ANSI
+#define RESET   "\033[0m"
+#define RED     "\033[31m"
+#define GREEN   "\033[32m"
+#define YELLOW  "\033[33m"
+#define BLUE    "\033[34m"
+#define MAGENTA "\033[35m"
+#define CYAN    "\033[36m"
+#define WHITE   "\033[37m"
+#define BOLD    "\033[1m"
+
 pthread_mutex_t mutex_archivo;
-int capacidad_archivo = 5; // Capacidad variable del archivo compartido
 
 // Estructura principal de procesos
 typedef struct {
@@ -29,6 +39,11 @@ typedef struct {
 // Simulación del archivo compartido
 char archivo_memoria[MAX_PROCESOS][64];
 int tope = 0;
+
+// Función para limpiar pantalla
+void limpiar_pantalla() {
+    printf("\033[2J\033[H");
+}
 
 // Guardar estado actual de procesos y archivo compartido
 void guardar_estado(const char* nombre_archivo, Proceso procesos[], int n) {
@@ -103,19 +118,15 @@ void* ejecutar_proceso(void* arg) {
     gettimeofday(&t_inicio, NULL);
     p->tiempo_inicio = t_inicio.tv_sec;
 
-    printf("\n🧵 Proceso %d (%s) ejecutándose %d s...\n",
-           p->id, p->tipo == 0 ? "Productor" : "Consumidor", p->duracion);
+    printf(CYAN "    🧵 Proceso %d" RESET " (" YELLOW "%s" RESET ") " GREEN "ejecutándose %d s..." RESET "\n",
+           p->id, p->tipo == 0 ? "🏭 Productor" : "🛒 Consumidor", p->duracion);
 
     sleep(p->duracion);
 
     pthread_mutex_lock(&mutex_archivo);
     if (p->tipo == 0) {
-        if (tope < capacidad_archivo) {
-            sprintf(p->resultado, "Proceso %d escribió: 3 + 5 = 8", p->id);
-            strcpy(archivo_memoria[tope++], p->resultado);
-        } else {
-            strcpy(p->resultado, "Archivo lleno - no se pudo escribir");
-        }
+        sprintf(p->resultado, "Proceso %d escribió: 3 + 5 = 8", p->id);
+        strcpy(archivo_memoria[tope++], p->resultado);
     } else {
         if (tope > 0) strcpy(p->resultado, archivo_memoria[--tope]);
         else strcpy(p->resultado, "Nada que leer");
@@ -129,26 +140,34 @@ void* ejecutar_proceso(void* arg) {
 }
 
 void planificador_fcfs(Proceso procesos[], int n) {
-    printf("\n🔷 Ejecutando FCFS con hilos...\n");
+    printf("\n" BOLD BLUE "🔷 EJECUTANDO FCFS (First Come First Served)" RESET "\n");
+    printf(CYAN "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" RESET "\n\n");
+    
     pthread_t hilos[n];
     for (int i = 0; i < n; i++) {
         pthread_create(&hilos[i], NULL, ejecutar_proceso, &procesos[i]);
         pthread_join(hilos[i], NULL);
     }
-    printf("\n📊 Métricas FCFS:\n");
+    
+    printf("\n" BOLD MAGENTA "📊 MÉTRICAS FCFS:" RESET "\n");
+    printf(MAGENTA "┌────┬─────────┬───────────┬──────────────────────────────────────────┐" RESET "\n");
+    printf(MAGENTA "│ ID │ Espera  │ Respuesta │                Resultado                 │" RESET "\n");
+    printf(MAGENTA "├────┼─────────┼───────────┼──────────────────────────────────────────┤" RESET "\n");
+    
     long total_espera = 0, total_respuesta = 0;
     for (int i = 0; i < n; i++) {
         long espera = procesos[i].tiempo_inicio - procesos[i].tiempo_llegada;
         long respuesta = procesos[i].tiempo_fin - procesos[i].tiempo_llegada;
         total_espera += espera;
         total_respuesta += respuesta;
-        printf("Proceso %d → Espera: %ld s | Respuesta: %ld s | Resultado: %s\n",
+        printf(MAGENTA "│" RESET "%3d " MAGENTA "│" RESET "%6ld s " MAGENTA "│" RESET "%8ld s " MAGENTA "│" RESET " %-39s " MAGENTA "│" RESET "\n",
                procesos[i].id, espera, respuesta, procesos[i].resultado);
     }
+    
+    printf(MAGENTA "└────┴─────────┴───────────┴──────────────────────────────────────────┘" RESET "\n");
     float prom_esp = total_espera / (float)n;
     float prom_resp = total_respuesta / (float)n;
-    printf("⏳ Promedio espera: %.2f s\n", prom_esp);
-    printf("⏳ Promedio respuesta: %.2f s\n", prom_resp);
+    printf(BOLD GREEN "⏳ Promedio espera: %.2f s" RESET " | " BOLD GREEN "⏳ Promedio respuesta: %.2f s" RESET "\n\n", prom_esp, prom_resp);
     guardar_metricas("FCFS", procesos, n, prom_esp, prom_resp);
 }
 
@@ -159,7 +178,9 @@ int comparar_duracion(const void* a, const void* b) {
 }
 
 void planificador_sjn(Proceso procesos[], int n) {
-    printf("\n🔷 Ejecutando SJN con hilos...\n");
+    printf("\n" BOLD BLUE "🔷 EJECUTANDO SJN (Shortest Job Next)" RESET "\n");
+    printf(CYAN "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" RESET "\n\n");
+    
     Proceso copia[n];
     for (int i = 0; i < n; i++) copia[i] = procesos[i];
     
@@ -179,20 +200,26 @@ void planificador_sjn(Proceso procesos[], int n) {
         pthread_create(&hilos[i], NULL, ejecutar_proceso, &copia[i]);
         pthread_join(hilos[i], NULL);
     }
-    printf("\n📊 Métricas SJN:\n");
+    
+    printf("\n" BOLD MAGENTA "📊 MÉTRICAS SJN:" RESET "\n");
+    printf(MAGENTA "┌────┬─────────┬───────────┬──────────────────────────────────────────┐" RESET "\n");
+    printf(MAGENTA "│ ID │ Espera  │ Respuesta │                Resultado                 │" RESET "\n");
+    printf(MAGENTA "├────┼─────────┼───────────┼──────────────────────────────────────────┤" RESET "\n");
+    
     long total_espera = 0, total_respuesta = 0;
     for (int i = 0; i < n; i++) {
         long espera = copia[i].tiempo_inicio - copia[i].tiempo_llegada;
         long respuesta = copia[i].tiempo_fin - copia[i].tiempo_llegada;
         total_espera += espera;
         total_respuesta += respuesta;
-        printf("Proceso %d → Espera: %ld s | Respuesta: %ld s | Resultado: %s\n",
+        printf(MAGENTA "│" RESET "%3d " MAGENTA "│" RESET "%6ld s " MAGENTA "│" RESET "%8ld s " MAGENTA "│" RESET " %-39s " MAGENTA "│" RESET "\n",
                copia[i].id, espera, respuesta, copia[i].resultado);
     }
+    
+    printf(MAGENTA "└────┴─────────┴───────────┴──────────────────────────────────────────┘" RESET "\n");
     float prom_esp = total_espera / (float)n;
     float prom_resp = total_respuesta / (float)n;
-    printf("⏳ Promedio espera: %.2f s\n", prom_esp);
-    printf("⏳ Promedio respuesta: %.2f s\n", prom_resp);
+    printf(BOLD GREEN "⏳ Promedio espera: %.2f s" RESET " | " BOLD GREEN "⏳ Promedio respuesta: %.2f s" RESET "\n\n", prom_esp, prom_resp);
     guardar_metricas("SJN", copia, n, prom_esp, prom_resp);
 }
 
@@ -203,7 +230,9 @@ int comparar_prioridad(const void* a, const void* b) {
 }
 
 void planificador_prioridad_sin_desalojo(Proceso procesos[], int n) {
-    printf("\n🔷 Ejecutando Prioridad (sin desalojo)...\n");
+    printf("\n" BOLD BLUE "🔷 EJECUTANDO PRIORIDAD (sin desalojo)" RESET "\n");
+    printf(CYAN "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" RESET "\n\n");
+    
     Proceso copia[n];
     for (int i = 0; i < n; i++) copia[i] = procesos[i];
     qsort(copia, n, sizeof(Proceso), comparar_prioridad);
@@ -213,24 +242,32 @@ void planificador_prioridad_sin_desalojo(Proceso procesos[], int n) {
         pthread_create(&hilos[i], NULL, ejecutar_proceso, &copia[i]);
         pthread_join(hilos[i], NULL);
     }
-    printf("\n📊 Métricas Prioridad (sin desalojo):\n");
+    
+    printf("\n" BOLD MAGENTA "📊 MÉTRICAS PRIORIDAD (sin desalojo):" RESET "\n");
+    printf(MAGENTA "┌────┬─────────┬───────────┬──────────────────────────────────────────┐" RESET "\n");
+    printf(MAGENTA "│ ID │ Espera  │ Respuesta │                Resultado                 │" RESET "\n");
+    printf(MAGENTA "├────┼─────────┼───────────┼──────────────────────────────────────────┤" RESET "\n");
+    
     long total_espera = 0, total_respuesta = 0;
     for (int i = 0; i < n; i++) {
         long espera = copia[i].tiempo_inicio - copia[i].tiempo_llegada;
         long respuesta = copia[i].tiempo_fin - copia[i].tiempo_llegada;
         total_espera += espera;
         total_respuesta += respuesta;
-        printf("Proceso %d → Espera: %ld s | Respuesta: %ld s | Resultado: %s\n",
+        printf(MAGENTA "│" RESET "%3d " MAGENTA "│" RESET "%6ld s " MAGENTA "│" RESET "%8ld s " MAGENTA "│" RESET " %-39s " MAGENTA "│" RESET "\n",
                copia[i].id, espera, respuesta, copia[i].resultado);
     }
+    
+    printf(MAGENTA "└────┴─────────┴───────────┴──────────────────────────────────────────┘" RESET "\n");
     float prom_esp = total_espera / (float)n;
     float prom_resp = total_respuesta / (float)n;
-    printf("⏳ Promedio espera: %.2f s\n", prom_esp);
-    printf("⏳ Promedio respuesta: %.2f s\n", prom_resp);
+    printf(BOLD GREEN "⏳ Promedio espera: %.2f s" RESET " | " BOLD GREEN "⏳ Promedio respuesta: %.2f s" RESET "\n\n", prom_esp, prom_resp);
     guardar_metricas("Prioridad (sin desalojo)", copia, n, prom_esp, prom_resp);
 }
 void planificador_prioridad_con_desalojo(Proceso procesos[], int n) {
-    printf("\n🔷 Ejecutando Prioridad (con desalojo)...\n");
+    printf("\n" BOLD BLUE "🔷 EJECUTANDO PRIORIDAD (con desalojo)" RESET "\n");
+    printf(CYAN "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" RESET "\n\n");
+    
     int tiempo = 0, completados = 0;
     int restantes[n];
     for (int i = 0; i < n; i++) restantes[i] = procesos[i].duracion;
@@ -251,9 +288,9 @@ void planificador_prioridad_con_desalojo(Proceso procesos[], int n) {
                 procesos[mejor].tiempo_inicio = t.tv_sec;
                 procesos[mejor].iniciado = 1;
             }
-            printf("Tiempo %d → Ejecutando P%d (%s) [Prioridad %d]\n",
+            printf(YELLOW "⏰ Tiempo %d" RESET " → " CYAN "Ejecutando P%d" RESET " (" YELLOW "%s" RESET ") " MAGENTA "[Prioridad %d]" RESET "\n",
                    tiempo, procesos[mejor].id,
-                   procesos[mejor].tipo == 0 ? "Prod" : "Cons",
+                   procesos[mejor].tipo == 0 ? "🏭 Prod" : "🛒 Cons",
                    procesos[mejor].prioridad);
             sleep(1);
             restantes[mejor]--;
@@ -264,45 +301,50 @@ void planificador_prioridad_con_desalojo(Proceso procesos[], int n) {
                 procesos[mejor].tiempo_fin = tf.tv_sec;
                 pthread_mutex_lock(&mutex_archivo);
                 if (procesos[mejor].tipo == 0) {
-                    if (tope < capacidad_archivo) {
-                        sprintf(procesos[mejor].resultado, "P%d escribió: 2*3=6", procesos[mejor].id);
-                        strcpy(archivo_memoria[tope++], procesos[mejor].resultado);
-                    } else {
-                        strcpy(procesos[mejor].resultado, "Archivo lleno - no se pudo escribir");
-                    }
+                    sprintf(procesos[mejor].resultado, "P%d escribió: 2*3=6", procesos[mejor].id);
+                    strcpy(archivo_memoria[tope++], procesos[mejor].resultado);
                 } else {
                     if (tope > 0) strcpy(procesos[mejor].resultado, archivo_memoria[--tope]);
                     else strcpy(procesos[mejor].resultado, "Nada que leer");
                 }
                 pthread_mutex_unlock(&mutex_archivo);
                 completados++;
+                printf(GREEN "    ✅ Proceso P%d completado!" RESET "\n", procesos[mejor].id);
             }
         } else {
-            printf("Tiempo %d → CPU inactivo\n", tiempo);
+            printf(RED "⏰ Tiempo %d" RESET " → " RED "CPU inactivo" RESET "\n", tiempo);
             sleep(1);
         }
         tiempo++;
     }
-    printf("\n📊 Métricas Prioridad (con desalojo):\n");
+    
+    printf("\n" BOLD MAGENTA "📊 MÉTRICAS PRIORIDAD (con desalojo):" RESET "\n");
+    printf(MAGENTA "┌────┬─────────┬───────────┬──────────────────────────────────────────┐" RESET "\n");
+    printf(MAGENTA "│ ID │ Espera  │ Respuesta │                Resultado                 │" RESET "\n");
+    printf(MAGENTA "├────┼─────────┼───────────┼──────────────────────────────────────────┤" RESET "\n");
+    
     long total_espera = 0, total_respuesta = 0;
     for (int i = 0; i < n; i++) {
         long espera = procesos[i].tiempo_inicio - procesos[i].tiempo_llegada;
         long respuesta = procesos[i].tiempo_fin - procesos[i].tiempo_llegada;
         total_espera += espera;
         total_respuesta += respuesta;
-        printf("Proceso %d → Espera: %ld s | Respuesta: %ld s | Resultado: %s\n",
+        printf(MAGENTA "│" RESET "%3d " MAGENTA "│" RESET "%6ld s " MAGENTA "│" RESET "%8ld s " MAGENTA "│" RESET " %-39s " MAGENTA "│" RESET "\n",
                procesos[i].id, espera, respuesta, procesos[i].resultado);
     }
+    
+    printf(MAGENTA "└────┴─────────┴───────────┴──────────────────────────────────────────┘" RESET "\n");
     float prom_esp = total_espera / (float)n;
     float prom_resp = total_respuesta / (float)n;
-    printf("⏳ Promedio espera: %.2f s\n", prom_esp);
-    printf("⏳ Promedio respuesta: %.2f s\n", prom_resp);
+    printf(BOLD GREEN "⏳ Promedio espera: %.2f s" RESET " | " BOLD GREEN "⏳ Promedio respuesta: %.2f s" RESET "\n\n", prom_esp, prom_resp);
     guardar_metricas("Prioridad (con desalojo)", procesos, n, prom_esp, prom_resp);
 }
 
 
 void planificador_rr(Proceso procesos[], int n) {
-    printf("\n🔷 Ejecutando Round Robin...\n");
+    printf("\n" BOLD BLUE "🔷 EJECUTANDO ROUND ROBIN (Quantum = %d s)" RESET "\n", QUANTUM);
+    printf(CYAN "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" RESET "\n\n");
+    
     int procesos_restantes = n;
     int tiempo = 0;
 
@@ -316,9 +358,9 @@ void planificador_rr(Proceso procesos[], int n) {
                     procesos[i].iniciado = 1;
                 }
                 int ejecutar = procesos[i].restante < QUANTUM ? procesos[i].restante : QUANTUM;
-                printf("🧵 Proceso %d (%s) ejecuta %d s (restante: %d)\n",
+                printf(CYAN "🧵 Proceso %d" RESET " (" YELLOW "%s" RESET ") " GREEN "ejecuta %d s" RESET " (restante: " MAGENTA "%d" RESET ")\n",
                        procesos[i].id,
-                       procesos[i].tipo == 0 ? "Productor" : "Consumidor",
+                       procesos[i].tipo == 0 ? "🏭 Productor" : "🛒 Consumidor",
                        ejecutar, procesos[i].restante);
                 sleep(ejecutar);
                 procesos[i].restante -= ejecutar;
@@ -328,51 +370,45 @@ void planificador_rr(Proceso procesos[], int n) {
                     procesos[i].tiempo_fin = tf.tv_sec;
                     pthread_mutex_lock(&mutex_archivo);
                     if (procesos[i].tipo == 0) {
-                        if (tope < capacidad_archivo) {
-                            sprintf(procesos[i].resultado, "Proceso %d escribió: 3 * 5 = 15", procesos[i].id);
-                            strcpy(archivo_memoria[tope++], procesos[i].resultado);
-                        } else {
-                            strcpy(procesos[i].resultado, "Archivo lleno - no se pudo escribir");
-                        }
+                        sprintf(procesos[i].resultado, "Proceso %d escribió: 3 * 5 = 15", procesos[i].id);
+                        strcpy(archivo_memoria[tope++], procesos[i].resultado);
                     } else {
                         if (tope > 0) strcpy(procesos[i].resultado, archivo_memoria[--tope]);
                         else strcpy(procesos[i].resultado, "Nada que leer");
                     }
                     pthread_mutex_unlock(&mutex_archivo);
                     procesos_restantes--;
+                    printf(GREEN "    ✅ Proceso %d completado!" RESET "\n", procesos[i].id);
                 }
             }
         }
         tiempo++;
     }
-    printf("\n📊 Métricas Round Robin:\n");
+    
+    printf("\n" BOLD MAGENTA "📊 MÉTRICAS ROUND ROBIN:" RESET "\n");
+    printf(MAGENTA "┌────┬─────────┬───────────┬──────────────────────────────────────────┐" RESET "\n");
+    printf(MAGENTA "│ ID │ Espera  │ Respuesta │                Resultado                 │" RESET "\n");
+    printf(MAGENTA "├────┼─────────┼───────────┼──────────────────────────────────────────┤" RESET "\n");
+    
     long total_espera = 0, total_respuesta = 0;
     for (int i = 0; i < n; i++) {
         long espera = procesos[i].tiempo_inicio - procesos[i].tiempo_llegada;
         long respuesta = procesos[i].tiempo_fin - procesos[i].tiempo_llegada;
         total_espera += espera;
         total_respuesta += respuesta;
-        printf("Proceso %d → Espera: %ld s | Respuesta: %ld s | Resultado: %s\n",
+        printf(MAGENTA "│" RESET "%3d " MAGENTA "│" RESET "%6ld s " MAGENTA "│" RESET "%8ld s " MAGENTA "│" RESET " %-39s " MAGENTA "│" RESET "\n",
                procesos[i].id, espera, respuesta, procesos[i].resultado);
     }
+    
+    printf(MAGENTA "└────┴─────────┴───────────┴──────────────────────────────────────────┘" RESET "\n");
     float prom_esp = total_espera / (float)n;
     float prom_resp = total_respuesta / (float)n;
-    printf("⏳ Promedio espera: %.2f s\n", prom_esp);
-    printf("⏳ Promedio respuesta: %.2f s\n", prom_resp);
+    printf(BOLD GREEN "⏳ Promedio espera: %.2f s" RESET " | " BOLD GREEN "⏳ Promedio respuesta: %.2f s" RESET "\n\n", prom_esp, prom_resp);
     guardar_metricas("Round Robin", procesos, n, prom_esp, prom_resp);
 }
 
 void menu() {
     pthread_mutex_init(&mutex_archivo, NULL);
-
-    // Configurar capacidad del archivo compartido
-    printf("🗂️  Configuración del archivo compartido:\n");
-    printf("Ingrese la capacidad del archivo (1-%d): ", MAX_PROCESOS);
-    scanf("%d", &capacidad_archivo);
-    if (capacidad_archivo < 1 || capacidad_archivo > MAX_PROCESOS) {
-        capacidad_archivo = 5;
-        printf("⚠️  Capacidad inválida. Usando capacidad por defecto: %d\n", capacidad_archivo);
-    }
 
     Proceso procesos[] = {
         {1, 0, 4, 0, 2, 4, 0, 0, "", 0, 0},
@@ -383,36 +419,81 @@ void menu() {
     int cantidad = sizeof(procesos)/sizeof(Proceso);
 
     int opcion;
-    printf("\n📋 Seleccione el algoritmo:\n");
-    printf("1. FCFS\n2. SJN\n3. Prioridad (sin desalojo)\n4. Prioridad (con desalojo)\n5. Round Robin\n6. Cargar estado desde archivo\n7. Guardar estado actual\nOpción: ");
-    scanf("%d", &opcion);
+    
+    do {
+        // Limpiar pantalla y mostrar título
+        limpiar_pantalla();
+        printf("\n");
+        printf("╔══════════════════════════════════════════════════════════════╗\n");
+        printf("║              🧵 SIMULADOR DE PLANIFICACIÓN DE PROCESOS       ║\n");
+        printf("╚══════════════════════════════════════════════════════════════╝\n");
+        printf("\n");
+        
+        // Resetear procesos para cada nueva ejecución
+        for (int i = 0; i < cantidad; i++) {
+            procesos[i].restante = procesos[i].duracion;
+            procesos[i].tiempo_inicio = 0;
+            procesos[i].tiempo_fin = 0;
+            strcpy(procesos[i].resultado, "");
+            procesos[i].completado = 0;
+            procesos[i].iniciado = 0;
+        }
+        tope = 0; // Resetear archivo compartido
+        
+        printf("\n🎯 SELECCIONE EL ALGORITMO DE PLANIFICACIÓN:\n");
+        printf("┌─────┬────────────────────────────────────────────┐\n");
+        printf("│  1  │ 📝 FCFS (First Come First Served)         │\n");
+        printf("│  2  │ ⚡ SJN (Shortest Job Next)                │\n");
+        printf("│  3  │ 🏆 Prioridad (sin desalojo)               │\n");
+        printf("│  4  │ 🔄 Prioridad (con desalojo)               │\n");
+        printf("│  5  │ 🔁 Round Robin                            │\n");
+        printf("│  0  │ 🚪 Salir del programa                     │\n");
+        printf("└─────┴────────────────────────────────────────────┘\n");
+        printf("💭 Ingrese su opción (0-5): ");
+        scanf("%d", &opcion);
 
-    switch (opcion) {
-        case 1: planificador_fcfs(procesos, cantidad); break;
-        case 2: planificador_sjn(procesos, cantidad); break;
-        case 3: planificador_prioridad_sin_desalojo(procesos, cantidad); break;
-        case 4: planificador_prioridad_con_desalojo(procesos, cantidad); break;
-        case 5: planificador_rr(procesos, cantidad); break;
-        case 6: {
-            printf("Ingrese el nombre del archivo a cargar: ");
-            char archivo[100];
-            scanf("%s", archivo);
-            int n = cargar_estado(archivo, procesos);
-            if (n > 0) {
-                printf("Estado cargado. Ejecutando con algoritmo FCFS...\n");
-                planificador_fcfs(procesos, n);
-            }
-            break;
+        switch (opcion) {
+            case 1: 
+                planificador_fcfs(procesos, cantidad); 
+                printf(BOLD CYAN "\n🔄 Presione ENTER para volver al menú..." RESET);
+                getchar(); // Para consumir el \n pendiente
+                getchar(); // Para esperar el ENTER del usuario
+                break;
+            case 2: 
+                planificador_sjn(procesos, cantidad); 
+                printf(BOLD CYAN "\n🔄 Presione ENTER para volver al menú..." RESET);
+                getchar();
+                getchar();
+                break;
+            case 3: 
+                planificador_prioridad_sin_desalojo(procesos, cantidad); 
+                printf(BOLD CYAN "\n🔄 Presione ENTER para volver al menú..." RESET);
+                getchar();
+                getchar();
+                break;
+            case 4: 
+                planificador_prioridad_con_desalojo(procesos, cantidad); 
+                printf(BOLD CYAN "\n🔄 Presione ENTER para volver al menú..." RESET);
+                getchar();
+                getchar();
+                break;
+            case 5: 
+                planificador_rr(procesos, cantidad); 
+                printf(BOLD CYAN "\n🔄 Presione ENTER para volver al menú..." RESET);
+                getchar();
+                getchar();
+                break;
+            case 0:
+                printf(BOLD GREEN "\n👋 Saliendo..." RESET "\n");
+                break;
+            default: 
+                printf(BOLD RED "❌ Opción inválida. Por favor seleccione una opción del 0 al 5." RESET "\n");
+                printf(BOLD CYAN "🔄 Presione ENTER para continuar..." RESET);
+                getchar();
+                getchar();
         }
-        case 7: {
-            printf("Ingrese el nombre del archivo para guardar: ");
-            char archivo[100];
-            scanf("%s", archivo);
-            guardar_estado(archivo, procesos, cantidad);
-            break;
-        }
-        default: printf("Opción inválida.\n");
-    }
+        
+    } while (opcion != 0);
 
     pthread_mutex_destroy(&mutex_archivo);
 }
