@@ -1,0 +1,17 @@
+
+==========================================
+Algoritmo: FCFS
+Fecha/Hora: Sat Aug  9 16:57:37 2025
+Número de procesos: 4
+Tiempo total simulación: 10 segundos
+------------------------------------------
+P1: Espera=0s, Respuesta=4s, Mutex=1μs, Resultado=prom(37,28,16,44,36)=32.20
+P2: Espera=3s, Respuesta=6s, Mutex=1μs, Resultado=5!=120
+P3: Espera=5s, Respuesta=7s, Mutex=1μs, Resultado=2*3=6
+P4: Espera=6s, Respuesta=7s, Mutex=1μs, Resultado=prom(41,10,14,27,41)=26.60
+------------------------------------------
+Promedio espera: 3.50 s
+Promedio respuesta: 6.00 s
+Promedio espera mutex: 0.00 ms
+Utilización CPU: 100.00%
+==========================================
