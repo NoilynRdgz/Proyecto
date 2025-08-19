@@ -423,7 +423,7 @@ void mostrar_metricas_completas(const char* algoritmo, Proceso procesos[], int n
         total_mutex += procesos[i].tiempo_espera_mutex;
         total_tiempo_ejecucion += procesos[i].duracion;
         
-        printf(MAGENTA "│ %-2d │ %5ld s │ %7ld s │ %9ld │ %-40s │" RESET "\n",
+        printf(MAGENTA "│ %-2d │ %5ld s │ %7ld s │ %9ld   │ %-40s │" RESET "\n",
                procesos[i].id, espera, respuesta, procesos[i].tiempo_espera_mutex,
                procesos[i].resultado);
     }
@@ -836,15 +836,15 @@ void menu() {
 
         printf("\n🎯 SELECCIONE EL ALGORITMO DE PLANIFICACIÓN:\n");
         printf("┌─────┬────────────────────────────────────────────┐\n");
-        printf("│  1  │ 📝 FCFS (First Come First Served)         │\n");
-        printf("│  2  │ ⚡ SJN (Shortest Job Next)                │\n");
-        printf("│  3  │ 🏆 Prioridad (sin desalojo)               │\n");
-        printf("│  4  │ 🔄 Prioridad (con desalojo)               │\n");
-        printf("│  5  │ 🔁 Round Robin                            │\n");
-        printf("│  6  │ 💾 Guardar estado actual                  │\n");
-        printf("│  7  │ 📂 Cargar estado desde archivo            │\n");
-        printf("│  8  │ ⚙️  Configuración dinámica de procesos    │\n");
-        printf("│  0  │ 🚪 Salir del programa                     │\n");
+        printf("│  1  │ 📝 FCFS (First Come First Served)          │\n");
+        printf("│  2  │ ⚡ SJN (Shortest Job Next)                 │\n");
+        printf("│  3  │ 🏆 Prioridad (sin desalojo)                │\n");
+        printf("│  4  │ 🔄 Prioridad (con desalojo)                │\n");
+        printf("│  5  │ 🔁 Round Robin                             │\n");
+        printf("│  6  │ 💾 Guardar estado actual                   │\n");
+        printf("│  7  │ 📂 Cargar estado desde archivo             │\n");
+        printf("│  8  │ ⚙️  Configuración dinámica de procesos      │\n");
+        printf("│  0  │ 🚪 Salir del programa                      │\n");
         printf("└─────┴────────────────────────────────────────────┘\n");
         printf("💭 Ingrese su opción (0-8): ");
         if (scanf("%d", &opcion) != 1) { opcion = -1; while(getchar()!='\n'); }
